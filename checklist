@@ -9,7 +9,7 @@ Vou deixar tudo em ordem, pra seguir quando quiser:
 
 📄 Criar modelo e rota de registro financeiro (km, lucro, combustível, etc) ← feito
 
-📊 Criar rota para dashboard (dados agrupados por dia, semana, mês)
+📊 Criar rota para dashboard (dados agrupados por dia, semana, mês) ← feito
 
 🌐 Adicionar validações com middleware ou Joi/Yup
 
