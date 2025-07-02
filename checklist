@@ -1,0 +1,22 @@
+🧱 Próximos passos depois do login
+Vou deixar tudo em ordem, pra seguir quando quiser:
+
+✅ Cadastro (/register) ← feito
+
+🔜 Login (/login) ← feito
+
+🔒 Criar middleware de autenticação JWT ← feito
+
+📄 Criar modelo e rota de registro financeiro (km, lucro, combustível, etc) ← feito
+
+📊 Criar rota para dashboard (dados agrupados por dia, semana, mês)
+
+🌐 Adicionar validações com middleware ou Joi/Yup
+
+🔐 Proteger as rotas (só logado pode acessar)
+
+💾 Versionar projeto no Git e GitHub
+
+🧪 Criar testes simples (opcional, mas bom pra aprender)
+
+🖼️ Criar front-end (opcional agora, mas pode ser feito depois com React ou outro)
