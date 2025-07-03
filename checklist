@@ -11,7 +11,7 @@ Vou deixar tudo em ordem, pra seguir quando quiser:
 
 📊 Criar rota para dashboard (dados agrupados por dia, semana, mês) ← feito
 
-🌐 Adicionar validações com middleware ou Joi/Yup
+🌐 Adicionar validações com middleware ou Joi/Yup ← feito
 
 🔐 Proteger as rotas (só logado pode acessar)
 

@@ -22,3 +22,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
 
 app.use('/api/registro', registroRoutes);
+
+const errorHandler = require('./middleware/errorHandler');
+
+app.use(errorHandler);

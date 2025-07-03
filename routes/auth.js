@@ -91,3 +91,13 @@ router.get('/protegido', authMiddleware, (req, res) => {
     userId: req.user.userId,
   });
 });
+
+// GET /me → retornar dados do usuário logado
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('-senha');
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ msg: 'Erro ao buscar dados do usuário' });
+  }
+});
