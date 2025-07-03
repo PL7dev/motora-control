@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1"
   },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "jest": "^30.0.4",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1"
   }
 }
