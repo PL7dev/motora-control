@@ -3,8 +3,10 @@ const router = express.Router();
 const Registro = require('../models/Registro');
 const authMiddleware = require('../middleware/authMiddleware');
 const mongoose = require('mongoose');
+const validate = require('../validations/validateMiddleware');
+const { registroSchema } = require('../validations/registroValidation');
 
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, validate(registroSchema), async (req, res) => {
     const { quilometragem, valorBruto, gastoCombustivel, valorCombustivelLitro, lucroLiquido } = req.body;
 
     try {
