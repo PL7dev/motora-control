@@ -68,3 +68,10 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@layer components {
+  .input {
+    @apply w-full border border-gray-300 rounded px-3 py-2;
+  }
+}
+
