@@ -6,36 +6,43 @@ const mongoose = require('mongoose');
 const validate = require('../validations/validateMiddleware');
 const { registroSchema } = require('../validations/registroValidation');
 
-router.post('/', authMiddleware, validate(registroSchema), async (req, res) => {
-  // Extrai os campos do body, sem lucroLiquido
-  const { quilometragem, valorBruto, gastoCombustivel, valorCombustivelLitro } = req.body;
-
-  try {
-    // Calcula lucro líquido aqui
-    const lucroLiquido = Number(valorBruto) - Number(gastoCombustivel);
-
-    const novoRegistro = new Registro({
-      userId: req.user.userId, // manter a associação com o usuário logado
-      quilometragem,
-      valorBruto,
-      gastoCombustivel,
-      valorCombustivelLitro,
-      lucroLiquido, // agora calculado no back-end
-    });
-
-    const registroSalvo = await novoRegistro.save();
-    res.status(201).json(registroSalvo);
-  } catch (error) {
-    res.status(500).send(`Erro ao salvar o registro: ${error.message}`);
-  }
-});
-
 router.get('/dashboard', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.userId;
+    const { filter, start, end } = req.query;
+
+    // Construir filtro de data
+    let matchDate = {};
+    const now = new Date();
+
+    if (filter === 'hoje') {
+      const inicioHoje = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const fimHoje = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      matchDate = { data: { $gte: inicioHoje, $lt: fimHoje } };
+    } else if (filter === 'estaSemana') {
+      // Pega domingo da semana atual
+      const diaSemana = now.getDay(); // 0 (domingo) a 6 (sábado)
+      const domingo = new Date(now);
+      domingo.setDate(now.getDate() - diaSemana);
+      const proximoDomingo = new Date(domingo);
+      proximoDomingo.setDate(domingo.getDate() + 7);
+      matchDate = { data: { $gte: domingo, $lt: proximoDomingo } };
+    } else if (filter === 'esteMes') {
+      const inicioMes = new Date(now.getFullYear(), now.getMonth(), 1);
+      const inicioProxMes = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      matchDate = { data: { $gte: inicioMes, $lt: inicioProxMes } };
+    } else if (filter === 'personalizado' && start && end) {
+      const dataInicio = new Date(start);
+      const dataFim = new Date(end);
+      dataFim.setDate(dataFim.getDate() + 1); // inclui o dia final completo
+      matchDate = { data: { $gte: dataInicio, $lt: dataFim } };
+    } else {
+      // Se não passou filtro, pega tudo do usuário
+      matchDate = {};
+    }
 
     const registros = await Registro.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      { $match: { userId: new mongoose.Types.ObjectId(userId), ...matchDate } },
       {
         $facet: {
           porDia: [
