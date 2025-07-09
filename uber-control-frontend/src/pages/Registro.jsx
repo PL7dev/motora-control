@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import BotaoVoltar from '../components/BotaoVoltar';
 
 export default function Registro() {
   const [form, setForm] = useState({
@@ -39,6 +40,11 @@ export default function Registro() {
         gastoCombustivel: '',
         valorCombustivelLitro: '',
       });
+
+      setTimeout(() => {
+        window.location.href = '/inicio';  // ou '/dashboard' se preferir
+      }, 2500);
+
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao criar registro');
     }
@@ -46,6 +52,7 @@ export default function Registro() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-4 border rounded-xl shadow-md">
+      <BotaoVoltar destino="/inicio" />
       <h2 className="text-xl font-bold mb-4">Novo Registro de Corrida</h2>
       {erro && <p className="text-red-500">{erro}</p>}
       {sucesso && <p className="text-green-500">{sucesso}</p>}
@@ -76,6 +83,8 @@ export default function Registro() {
           placeholder="Gasto com combustível"
           className="input"
           required
+          step={0.01}
+          min={0}
         />
         <input
           type="number"
