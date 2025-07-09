@@ -8,10 +8,10 @@ export default function Dashboard() {
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
-const handleLogout = () => {
-  localStorage.removeItem('token');
-  navigate('/login');
-};
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   useEffect(() => {
     const fetchDashboard = async () => {
