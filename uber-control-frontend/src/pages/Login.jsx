@@ -22,7 +22,7 @@ export default function Login() {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', form);
       localStorage.setItem('token', res.data.token); // salva token no localStorage
-      navigate('/dashboard'); // redireciona para dashboard após login
+      navigate('/inicio'); // redireciona para início após login
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao fazer login');
     }

@@ -23,10 +23,6 @@ const registroSchema = Joi.object({
     'number.positive': 'Valor do combustível por litro deve ser positivo',
     'any.required': 'Valor do combustível por litro é obrigatório',
   }),
-  lucroLiquido: Joi.number().required().messages({
-    'number.base': 'Lucro líquido deve ser um número',
-    'any.required': 'Lucro líquido é obrigatório',
-  }),
 });
 
 module.exports = { registroSchema };

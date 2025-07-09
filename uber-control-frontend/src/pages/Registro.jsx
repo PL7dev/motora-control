@@ -7,7 +7,6 @@ export default function Registro() {
     valorBruto: '',
     gastoCombustivel: '',
     valorCombustivelLitro: '',
-    lucroLiquido: '',
   });
 
   const [erro, setErro] = useState('');
@@ -39,7 +38,6 @@ export default function Registro() {
         valorBruto: '',
         gastoCombustivel: '',
         valorCombustivelLitro: '',
-        lucroLiquido: '',
       });
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao criar registro');
@@ -85,15 +83,6 @@ export default function Registro() {
           value={form.valorCombustivelLitro}
           onChange={handleChange}
           placeholder="Valor do combustível por litro"
-          className="input"
-          required
-        />
-        <input
-          type="number"
-          name="lucroLiquido"
-          value={form.lucroLiquido}
-          onChange={handleChange}
-          placeholder="Lucro líquido"
           className="input"
           required
         />
