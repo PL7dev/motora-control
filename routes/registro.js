@@ -6,6 +6,29 @@ const mongoose = require('mongoose');
 const validate = require('../validations/validateMiddleware');
 const { registroSchema } = require('../validations/registroValidation');
 
+router.post('/', authMiddleware, validate(registroSchema), async (req, res) => {
+  const { quilometragem, valorBruto, gastoCombustivel, valorCombustivelLitro } = req.body;
+
+  try {
+    const lucroLiquido = Number(valorBruto) - Number(gastoCombustivel);
+
+    const novoRegistro = new Registro({
+      userId: req.user.userId,
+      quilometragem,
+      valorBruto,
+      gastoCombustivel,
+      valorCombustivelLitro,
+      lucroLiquido,
+    });
+
+    const registroSalvo = await novoRegistro.save();
+    res.status(201).json(registroSalvo);
+  } catch (error) {
+    res.status(500).json({ msg: `Erro ao salvar o registro: ${error.message}` });
+  }
+});
+
+
 router.get('/dashboard', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.userId;
