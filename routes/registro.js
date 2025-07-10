@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Registro = require('../models/Registro');
+const User = require('../models/User');
 const authMiddleware = require('../middleware/authMiddleware');
 const mongoose = require('mongoose');
 const validate = require('../validations/validateMiddleware');
@@ -28,11 +29,14 @@ router.post('/', authMiddleware, validate(registroSchema), async (req, res) => {
   }
 });
 
-
 router.get('/dashboard', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.userId;
     const { filter, start, end } = req.query;
+
+    // Busca dados do usuário
+    const usuario = await User.findById(userId).select('modeloCarro kmPorLitro metaLucroDiario');
+    if (!usuario) return res.status(404).json({ msg: 'Usuário não encontrado' });
 
     // Construir filtro de data
     let matchDate = {};
@@ -43,8 +47,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
       const fimHoje = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
       matchDate = { data: { $gte: inicioHoje, $lt: fimHoje } };
     } else if (filter === 'estaSemana') {
-      // Pega domingo da semana atual
-      const diaSemana = now.getDay(); // 0 (domingo) a 6 (sábado)
+      const diaSemana = now.getDay();
       const domingo = new Date(now);
       domingo.setDate(now.getDate() - diaSemana);
       const proximoDomingo = new Date(domingo);
@@ -57,11 +60,10 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
     } else if (filter === 'personalizado' && start && end) {
       const dataInicio = new Date(start);
       const dataFim = new Date(end);
-      dataFim.setDate(dataFim.getDate() + 1); // inclui o dia final completo
+      dataFim.setDate(dataFim.getDate() + 1);
       matchDate = { data: { $gte: dataInicio, $lt: dataFim } };
     } else {
-      // Se não passou filtro, pega tudo do usuário
-      matchDate = {};
+      matchDate = {}; // sem filtro
     }
 
     const registros = await Registro.aggregate([
@@ -112,7 +114,22 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
       },
     ]);
 
-    res.json(registros[0]);
+    // Adicionar metaBateu em porDia
+    const porDiaComMeta = registros[0].porDia.map((dia) => {
+      const bateu = dia.totalLucro >= usuario.metaLucroDiario;
+      return { ...dia, metaBateu: bateu };
+    });
+
+    res.json({
+      usuario: {
+        modeloCarro: usuario.modeloCarro,
+        kmPorLitro: usuario.kmPorLitro,
+        metaLucroDiario: usuario.metaLucroDiario,
+      },
+      porDia: porDiaComMeta,
+      porSemana: registros[0].porSemana,
+      porMes: registros[0].porMes,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Erro ao buscar dashboard' });
