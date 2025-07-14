@@ -34,11 +34,12 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
     const userId = req.user.userId;
     const { filter, start, end } = req.query;
 
-    // Busca dados do usuário
     const usuario = await User.findById(userId).select('modeloCarro kmPorLitro metaLucroDiario');
     if (!usuario) return res.status(404).json({ msg: 'Usuário não encontrado' });
 
-    // Construir filtro de data
+    const ultimoRegistro = await Registro.findOne({ userId }).sort({ data: -1 });
+    const precoCombustivel = ultimoRegistro?.valorCombustivelLitro || 6.29;
+
     let matchDate = {};
     const now = new Date();
 
@@ -62,74 +63,87 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
       const dataFim = new Date(end);
       dataFim.setDate(dataFim.getDate() + 1);
       matchDate = { data: { $gte: dataInicio, $lt: dataFim } };
-    } else {
-      matchDate = {}; // sem filtro
     }
 
     const registros = await Registro.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(userId), ...matchDate } },
-      {
-        $facet: {
-          porDia: [
-            {
-              $group: {
-                _id: {
-                  ano: { $year: '$data' },
-                  mes: { $month: '$data' },
-                  dia: { $dayOfMonth: '$data' },
-                },
-                totalLucro: { $sum: '$lucroLiquido' },
-                totalKm: { $sum: '$quilometragem' },
-              },
+  { $match: { userId: new mongoose.Types.ObjectId(userId), ...matchDate } },
+  {
+    $facet: {
+      porDia: [
+        {
+          $group: {
+            _id: {
+              ano: { $year: '$data' },
+              mes: { $month: '$data' },
+              dia: { $dayOfMonth: '$data' },
             },
-            { $sort: { '_id.ano': -1, '_id.mes': -1, '_id.dia': -1 } },
-          ],
-          porSemana: [
-            {
-              $group: {
-                _id: {
-                  ano: { $year: '$data' },
-                  semana: { $week: '$data' },
-                },
-                totalLucro: { $sum: '$lucroLiquido' },
-                totalKm: { $sum: '$quilometragem' },
-              },
-            },
-            { $sort: { '_id.ano': -1, '_id.semana': -1 } },
-          ],
-          porMes: [
-            {
-              $group: {
-                _id: {
-                  ano: { $year: '$data' },
-                  mes: { $month: '$data' },
-                },
-                totalLucro: { $sum: '$lucroLiquido' },
-                totalKm: { $sum: '$quilometragem' },
-              },
-            },
-            { $sort: { '_id.ano': -1, '_id.mes': -1 } },
-          ],
+            totalLucro: { $sum: '$lucroLiquido' },
+            totalKm: { $sum: '$quilometragem' },
+          },
         },
-      },
-    ]);
+        { $sort: { '_id.ano': -1, '_id.mes': -1, '_id.dia': -1 } },
+      ],
+      porSemana: [
+        {
+          $group: {
+            _id: {
+              ano: { $year: '$data' },
+              semana: { $week: '$data' },
+            },
+            totalLucro: { $sum: '$lucroLiquido' },
+            totalKm: { $sum: '$quilometragem' },
+          },
+        },
+        { $sort: { '_id.ano': -1, '_id.semana': -1 } },
+      ],
+      porMes: [
+        {
+          $group: {
+            _id: {
+              ano: { $year: '$data' },
+              mes: { $month: '$data' },
+            },
+            totalLucro: { $sum: '$lucroLiquido' },
+            totalKm: { $sum: '$quilometragem' },
+          },
+        },
+        { $sort: { '_id.ano': -1, '_id.mes': -1 } },
+      ],
+      totalGastoCombustivel: [
+        {
+          $group: {
+            _id: null,
+            total: { $sum: '$gastoCombustivel' },
+          },
+        },
+      ],
+    },
+  },
+]);
 
-    // Adicionar metaBateu em porDia
+const totalGastoCombustivel = registros[0].totalGastoCombustivel.length > 0
+  ? registros[0].totalGastoCombustivel[0].total
+  : 0;
+
     const porDiaComMeta = registros[0].porDia.map((dia) => {
       const bateu = dia.totalLucro >= usuario.metaLucroDiario;
       return { ...dia, metaBateu: bateu };
     });
 
     res.json({
-      usuario: {
-        modeloCarro: usuario.modeloCarro,
-        kmPorLitro: usuario.kmPorLitro,
-        metaLucroDiario: usuario.metaLucroDiario,
-      },
-      porDia: porDiaComMeta,
-      porSemana: registros[0].porSemana,
-      porMes: registros[0].porMes,
-    });
+    usuario: {
+      modeloCarro: usuario.modeloCarro,
+      kmPorLitro: usuario.kmPorLitro,
+      metaLucroDiario: usuario.metaLucroDiario,
+    },
+    precoCombustivel,
+    totalGastoCombustivel: registros[0].totalGastoCombustivel.length > 0
+    ? registros[0].totalGastoCombustivel[0].total
+    : 0,
+    porDia: porDiaComMeta,
+    porSemana: registros[0].porSemana,
+    porMes: registros[0].porMes,
+      });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Erro ao buscar dashboard' });

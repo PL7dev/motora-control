@@ -64,8 +64,8 @@ export default function Dashboard() {
   const totalLucro = porMes?.reduce((acc, cur) => acc + cur.totalLucro, 0) || 0;
   const totalKm = porMes?.reduce((acc, cur) => acc + cur.totalKm, 0) || 0;
   // Para gasto combustível, preço do combustível pode vir do backend; aqui só exemplo
-  const precoCombustivel = dashboardData.precoCombustivel || 5;
-  const totalGastoCombustivel = totalKm / (usuario.kmPorLitro || 10) * precoCombustivel;
+  const totalGastoCombustivelMes = dashboardData.totalGastoCombustivel || 0;
+
   const mediaLucro = porDia?.length
     ? porDia.reduce((acc, cur) => acc + cur.totalLucro, 0) / porDia.length
     : 0;
@@ -156,13 +156,13 @@ export default function Dashboard() {
         </div>
 
         <div className={`p-4 rounded shadow ${cores[2]}`}>
-          <h2 className="text-xl font-semibold mb-2">Corridas Registradas</h2>
+          <h2 className="text-xl font-semibold mb-2">Dias registrados</h2>
           <p className="text-3xl font-bold">{porDia.length}</p>
         </div>
 
         <div className={`p-4 rounded shadow ${cores[3]}`}>
           <h2 className="text-xl font-semibold mb-2">Gasto Total com Combustível</h2>
-          <p className="text-3xl font-bold">R$ {totalGastoCombustivel.toFixed(2)}</p>
+          <p className="text-3xl font-bold">R$ {totalGastoCombustivelMes.toFixed(2)}</p>
         </div>
 
         <div className={`p-4 rounded shadow ${cores[0]}`}>
@@ -176,7 +176,7 @@ export default function Dashboard() {
         </div>
 
         <div className={`p-4 rounded shadow ${cores[2]}`}>
-          <h2 className="text-xl font-semibold mb-2">Valor Médio por Km</h2>
+          <h2 className="text-xl font-semibold mb-2">Lucro Médio por Km</h2>
           <p className="text-3xl font-bold">R$ {valorMedioKm.toFixed(2)}</p>
         </div>
 
