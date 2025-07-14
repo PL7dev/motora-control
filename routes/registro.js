@@ -29,6 +29,43 @@ router.post('/', authMiddleware, validate(registroSchema), async (req, res) => {
   }
 });
 
+router.get('/historico', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { start, end, page = 1, limit = 10 } = req.query;
+
+    // Montar filtro de data se start e end existirem
+    let matchDate = {};
+    if (start && end) {
+      const dataInicio = new Date(start);
+      const dataFim = new Date(end);
+      dataFim.setDate(dataFim.getDate() + 1);
+      matchDate = { data: { $gte: dataInicio, $lt: dataFim } };
+    }
+
+    // Query para contar total de registros (com filtro)
+    const total = await Registro.countDocuments({ userId, ...matchDate });
+
+    // Buscar registros paginados e ordenados pela data desc
+    const registros = await Registro.find({ userId, ...matchDate })
+      .sort({ data: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    res.json({
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      totalPages: Math.ceil(total / limit),
+      registros,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Erro ao buscar histórico' });
+  }
+});
+
+
 router.get('/dashboard', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.userId;
