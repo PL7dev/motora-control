@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Inicio from './pages/Inicio';
 import Dashboard from './pages/Dashboard';
+import HistoricoDetalhado from './pages/HistoricoDetalhado';
 import Registro from './pages/Registro';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -31,6 +32,8 @@ export default function App() {
           </PrivateRoute>
         } 
       />
+
+      <Route path="/historico" element={<HistoricoDetalhado />} />
 
       <Route 
         path="/registro" 

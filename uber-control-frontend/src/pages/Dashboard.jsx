@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -9,6 +10,7 @@ export default function Dashboard() {
   const [erro, setErro] = useState('');
   const [filter, setFilter] = useState('hoje'); // opções: hoje, estaSemana, esteMes, personalizado
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+  const navigate = useNavigate();
 
   const buildQueryParams = () => {
     const params = new URLSearchParams();
@@ -137,6 +139,18 @@ export default function Dashboard() {
           </label>
         </div>
       )}
+
+    <div className="...">
+      {/* ...dashboard completo */}
+      <div className="mt-10">
+        <button
+          onClick={() => navigate('/historico')}
+          className="px-4 py-2 bg-blue-600 text-white rounded shadow"
+        >
+          Ver Histórico Detalhado
+        </button>
+      </div>
+    </div>
 
       {/* Cards principais */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-10">
