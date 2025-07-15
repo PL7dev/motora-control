@@ -2,16 +2,36 @@ import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Bem-vindo ao Uber Control</h1>
-      <nav>
-        <Link to="/login" className="mr-4 text-blue-600 hover:underline">
-          Login
-        </Link>
-        <Link to="/register" className="text-blue-600 hover:underline">
-          Cadastrar
-        </Link>
-      </nav>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="max-w-xl text-center">
+        <h1 className="text-4xl font-bold text-blue-800 mb-4">Bem-vindo ao <span className="text-blue-600">Uber Control</span></h1>
+        <p className="text-gray-600 text-lg mb-6">
+          Controle seus ganhos, gastos com combustível e metas diárias como motorista de app.
+        </p>
+        
+        <div className="flex justify-center gap-4 mb-6">
+          <Link to="/login" className="bg-blue-400 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+            Entrar
+          </Link>
+          <Link to="/register" className="border border-blue-600 text-blue-600 px-6 py-2 rounded hover:bg-blue-50 transition">
+            Cadastrar
+          </Link>
+        </div>
+
+        <div className="flex justify-center gap-4 text-sm text-gray-500">
+          <Link to="/como-funciona" className="hover:underline">
+            Como Funciona
+          </Link>
+          <a
+            href="https://github.com/pl7dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            GitHub do Desenvolvedor
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

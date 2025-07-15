@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import ComoFunciona from './pages/ComoFunciona';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Inicio from './pages/Inicio';
@@ -12,7 +13,8 @@ import PrivateRoute from './components/PrivateRoute';
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />               
+      <Route path="/" element={<Home />} />    
+      <Route path="/como-funciona" element={<ComoFunciona />} />           
       <Route path="/login" element={<Login />} />         
       <Route path="/register" element={<Register />} />   
 
