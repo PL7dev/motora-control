@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Inicio from './pages/Inicio';
+import Perfil from './pages/Perfil';
 import Dashboard from './pages/Dashboard';
 import HistoricoDetalhado from './pages/HistoricoDetalhado';
 import Registro from './pages/Registro';
@@ -23,6 +24,15 @@ export default function App() {
           </PrivateRoute>
         } 
       />
+
+      <Route 
+        path="/perfil" 
+        element={
+          <PrivateRoute>
+            <Perfil />
+          </PrivateRoute>
+        }
+      />  
 
       <Route 
         path="/dashboard" 

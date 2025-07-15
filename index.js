@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const registroRoutes = require('./routes/registro');
 const errorHandler = require('./middleware/errorHandler');
+const perfilRoutes = require('./routes/perfil');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/registro', registroRoutes);
+app.use('/api/perfil', perfilRoutes);
 
 app.get('/', (req, res) => {
   res.send('API do Uber Control funcionando!');
