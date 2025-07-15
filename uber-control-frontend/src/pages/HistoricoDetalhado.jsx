@@ -45,58 +45,155 @@ export default function HistoricoDetalhado() {
     setPage(1); // resetar página ao mudar filtro
   };
 
-  return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Histórico Detalhado</h1>
-      <BotaoVoltar />    
-      <div className="mb-6 flex gap-4">
-        <label>
-          De: <input type="date" value={dateRange.start} onChange={e => handleDateChange('start', e.target.value)} className="border rounded p-1" />
-        </label>
-        <label>
-          Até: <input type="date" value={dateRange.end} onChange={e => handleDateChange('end', e.target.value)} className="border rounded p-1" />
-        </label>
-      </div>
+	// Cálculo dos totais
+	const totalizadores = registros.reduce(
+	  (acc, curr) => {
+	    acc.valorBruto += curr.valorBruto || 0;
+	    acc.gastoCombustivel += curr.gastoCombustivel || 0;
+	    acc.lucroLiquido += curr.lucroLiquido || 0;
+	    acc.quilometragem += curr.quilometragem || 0;
+	    return acc;
+	  },
+	  { valorBruto: 0, gastoCombustivel: 0, lucroLiquido: 0, quilometragem: 0 }
+	);
 
-      {loading && <p>Carregando registros...</p>}
-      {erro && <p className="text-red-500">{erro}</p>}
+	const [sortColumn, setSortColumn] = useState(null); // ex: 'valorBruto'
+	const [sortDirection, setSortDirection] = useState('asc'); // 'asc' ou 'desc'
 
-      {!loading && !erro && (
-        <>
-          <table className="w-full border-collapse mb-6">
-            <thead>
-              <tr>
-                <th className="border p-2">Data</th>
-                <th className="border p-2">Quilometragem</th>
-                <th className="border p-2">Valor Bruto</th>
-                <th className="border p-2">Gasto Combustível</th>
-                <th className="border p-2">Lucro Líquido</th>
-              </tr>
-            </thead>
-            <tbody>
-              {registros.length === 0 ? (
-                <tr><td colSpan="5" className="text-center p-4">Nenhum registro encontrado.</td></tr>
-              ) : (
-                registros.map(reg => (
-                  <tr key={reg._id}>
-                    <td className="border p-2">{new Date(reg.data).toLocaleDateString()}</td>
-                    <td className="border p-2">{reg.quilometragem}</td>
-                    <td className="border p-2">R$ {reg.valorBruto.toFixed(2)}</td>
-                    <td className="border p-2">R$ {reg.gastoCombustivel.toFixed(2)}</td>
-                    <td className="border p-2">R$ {reg.lucroLiquido.toFixed(2)}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+// Função de ordenação
+	const ordenarRegistros = () => {
+	  if (!sortColumn) return registros;
 
-          <div className="flex justify-between">
-            <button disabled={page <= 1} onClick={() => setPage(p => Math.max(p - 1, 1))} className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">Anterior</button>
-            <span>Página {page} de {totalPages}</span>
-            <button disabled={page >= totalPages} onClick={() => setPage(p => Math.min(p + 1, totalPages))} className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">Próximo</button>
-          </div>
-        </>
-      )}
-    </div>
-  );
+	  return [...registros].sort((a, b) => {
+	    let valA = a[sortColumn];
+	    let valB = b[sortColumn];
+
+	    if (sortColumn === 'lucroPorKm') {
+	      valA = a.quilometragem > 0 ? a.lucroLiquido / a.quilometragem : 0;
+	      valB = b.quilometragem > 0 ? b.lucroLiquido / b.quilometragem : 0;
+	    }
+
+	    if (sortColumn === 'brutoPorKm') {
+	      valA = a.quilometragem > 0 ? a.valorBruto / a.quilometragem : 0;
+	      valB = b.quilometragem > 0 ? b.valorBruto / b.quilometragem : 0;
+	    }
+
+	    if (typeof valA === 'string') {
+	      return sortDirection === 'asc'
+	        ? valA.localeCompare(valB)
+	        : valB.localeCompare(valA);
+	    }
+
+	    return sortDirection === 'asc' ? valA - valB : valB - valA;
+	  });
+	};
+
+	const registrosOrdenados = ordenarRegistros();
+
+	const toggleSort = (coluna) => {
+	  if (sortColumn === coluna) {
+	    setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+	  } else {
+	    setSortColumn(coluna);
+	    setSortDirection('asc');
+	  }
+	};
+
+
+	return (
+	  <div className="max-w-6xl mx-auto p-6">
+	    <h1 className="text-3xl font-bold mb-6">Histórico Detalhado</h1>
+	    <BotaoVoltar />    
+	    <div className="mb-6 flex gap-4">
+	      <label>
+	        De: <input type="date" value={dateRange.start} onChange={e => handleDateChange('start', e.target.value)} className="border rounded p-1" />
+	      </label>
+	      <label>
+	        Até: <input type="date" value={dateRange.end} onChange={e => handleDateChange('end', e.target.value)} className="border rounded p-1" />
+	      </label>
+	    </div>
+
+	    {loading && <p>Carregando registros...</p>}
+	    {erro && <p className="text-red-500">{erro}</p>}
+
+	    {!loading && !erro && (
+	      <>
+	        <table className="w-full border-collapse mb-6 text-sm sm:text-base">
+	          <thead>
+	            <tr>
+	              <th className="border p-2 cursor-pointer" onClick={() => toggleSort('data')}>
+  								Data {sortColumn === 'data' && (sortDirection === 'asc' ? '↑' : '↓')}
+								</th>
+								<th className="border p-2 cursor-pointer" onClick={() => toggleSort('quilometragem')}>
+								  Quilometragem {sortColumn === 'quilometragem' && (sortDirection === 'asc' ? '↑' : '↓')}
+								</th>
+								<th className="border p-2 cursor-pointer" onClick={() => toggleSort('valorBruto')}>
+								  Valor Bruto {sortColumn === 'valorBruto' && (sortDirection === 'asc' ? '↑' : '↓')}
+								</th>
+								<th className="border p-2 cursor-pointer" onClick={() => toggleSort('gastoCombustivel')}>
+								  Gasto Combustível {sortColumn === 'gastoCombustivel' && (sortDirection === 'asc' ? '↑' : '↓')}
+								</th>
+								<th className="border p-2 cursor-pointer" onClick={() => toggleSort('lucroLiquido')}>
+								  Lucro Líquido {sortColumn === 'lucroLiquido' && (sortDirection === 'asc' ? '↑' : '↓')}
+								</th>
+								<th className="border p-2 cursor-pointer" onClick={() => toggleSort('lucroPorKm')}>
+								  Lucro / Km {sortColumn === 'lucroPorKm' && (sortDirection === 'asc' ? '↑' : '↓')}
+								</th>
+								<th className="border p-2 cursor-pointer" onClick={() => toggleSort('brutoPorKm')}>
+								  Bruto / Km {sortColumn === 'brutoPorKm' && (sortDirection === 'asc' ? '↑' : '↓')}
+								</th>
+	            </tr>
+	          </thead>
+	          <tbody>
+	            {registros.length === 0 ? (
+	              <tr><td colSpan="7" className="text-center p-4">Nenhum registro encontrado.</td></tr>
+	            ) : (
+	              <>
+	                {registrosOrdenados.map(reg => {
+  									const lucroPorKm = reg.quilometragem > 0 ? reg.lucroLiquido / reg.quilometragem : 0;
+  									const brutoPorKm = reg.quilometragem > 0 ? reg.valorBruto / reg.quilometragem : 0;
+  									return (
+	                    <tr key={reg._id}>
+	                      <td className="border p-2">{new Date(reg.data).toLocaleDateString()}</td>
+	                      <td className="border p-2">{reg.quilometragem}</td>
+	                      <td className="border p-2">R$ {reg.valorBruto.toFixed(2)}</td>
+	                      <td className="border p-2">R$ {reg.gastoCombustivel.toFixed(2)}</td>
+	                      <td className="border p-2">R$ {reg.lucroLiquido.toFixed(2)}</td>
+	                      <td className="border p-2">R$ {lucroPorKm.toFixed(2)}</td>
+	                      <td className="border p-2">R$ {brutoPorKm.toFixed(2)}</td>
+	                    </tr>
+	                  );
+	                })}
+	                {/* Linha de totalizadores */}
+	                <tr className="bg-gray-100 font-semibold text-black">
+	                  <td className="border p-2">Totais:</td>
+	                  <td className="border p-2">{totalizadores.quilometragem.toFixed(2)} km</td>
+	                  <td className="border p-2">R$ {totalizadores.valorBruto.toFixed(2)}</td>
+	                  <td className="border p-2">R$ {totalizadores.gastoCombustivel.toFixed(2)}</td>
+	                  <td className="border p-2">R$ {totalizadores.lucroLiquido.toFixed(2)}</td>
+	                  <td className="border p-2">
+	                    R$ {totalizadores.quilometragem > 0
+	                      ? (totalizadores.lucroLiquido / totalizadores.quilometragem).toFixed(2)
+	                      : '0.00'}
+	                  </td>
+	                  <td className="border p-2">
+	                    R$ {totalizadores.quilometragem > 0
+	                      ? (totalizadores.valorBruto / totalizadores.quilometragem).toFixed(2)
+	                      : '0.00'}
+	                  </td>
+	                </tr>
+	              </>
+	            )}
+	          </tbody>
+	        </table>
+
+	        <div className="flex justify-between">
+	          <button disabled={page <= 1} onClick={() => setPage(p => Math.max(p - 1, 1))} className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">Anterior</button>
+	          <span>Página {page} de {totalPages}</span>
+	          <button disabled={page >= totalPages} onClick={() => setPage(p => Math.min(p + 1, totalPages))} className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">Próximo</button>
+	        </div>
+	      </>
+	    )}
+	  </div>
+	);
 }
