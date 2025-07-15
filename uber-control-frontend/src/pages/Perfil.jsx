@@ -48,6 +48,11 @@ export default function Perfil() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMensagem('Perfil atualizado com sucesso!');
+
+      setTimeout(() => {
+        window.location.href = '/inicio';  // ou '/dashboard' se preferir
+      }, 2500);
+      
     } catch (err) {
       setMensagem('Erro ao atualizar perfil');
     }

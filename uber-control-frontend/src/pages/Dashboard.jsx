@@ -3,6 +3,15 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
 import { useNavigate } from 'react-router-dom';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -76,8 +85,7 @@ export default function Dashboard() {
     : 0;
   const valorMedioKm = mediaKm > 0 ? mediaLucro / mediaKm : 0;
 
-  // Checa se meta do lucro diário foi batida para o filtro atual (ex: hoje)
-  // Por simplicidade, pega o lucro do primeiro dia em porDia e compara com meta
+  // Lucro do dia atual e verificação de meta
   const lucroDiaAtual = porDia?.[0]?.totalLucro || 0;
   const metaBatida = lucroDiaAtual >= (usuario.metaLucroDiario || 100);
 
@@ -199,6 +207,24 @@ export default function Dashboard() {
           <p className="text-3xl font-bold">R$ {(usuario.metaLucroDiario || 100).toFixed(2)}</p>
         </div>
       </div>
+
+      <h2 className="text-2xl font-bold mb-4">Gráficos</h2>
+      <div className="w-full h-80 mb-8 bg-white p-4 rounded shadow">
+        <h3 className="text-lg font-semibold mb-2">Lucro por Dia</h3>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={porDia.map(item => ({
+            data: `${item._id.dia}/${item._id.mes}`,
+            lucro: item.totalLucro
+          }))}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="data" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="lucro" stroke="#10b981" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
 
       {/* Lucro por Dia */}
       <section className="mb-8">

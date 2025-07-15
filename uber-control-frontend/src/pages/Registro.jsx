@@ -42,7 +42,7 @@ export default function Registro() {
       });
 
       setTimeout(() => {
-        window.location.href = '/inicio';  // ou '/dashboard' se preferir
+        window.location.href = '/inicio';  
       }, 2500);
 
     } catch (err) {
