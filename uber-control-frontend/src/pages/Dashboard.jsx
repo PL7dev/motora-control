@@ -11,6 +11,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Bar,
+  BarChart,
+  Legend,
 } from 'recharts';
 
 export default function Dashboard() {
@@ -30,6 +33,12 @@ export default function Dashboard() {
     }
     return params.toString();
   };
+
+  useEffect(() => {
+    console.log('Dados do gráfico:', dashboardData);
+  }, [dashboardData]);
+
+
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -69,7 +78,7 @@ export default function Dashboard() {
   if (erro) return <p className="text-red-500">{erro}</p>;
   if (!dashboardData) return null;
 
-  const { usuario, porDia, porSemana, porMes } = dashboardData;
+  const { usuario, porDia, porMes } = dashboardData;
 
   // Totais e médias
   const totalLucro = porMes?.reduce((acc, cur) => acc + cur.totalLucro, 0) || 0;
@@ -148,18 +157,6 @@ export default function Dashboard() {
         </div>
       )}
 
-    <div className="...">
-      {/* ...dashboard completo */}
-      <div className="mt-10">
-        <button
-          onClick={() => navigate('/historico')}
-          className="px-4 py-2 bg-blue-600 text-white rounded shadow"
-        >
-          Ver Histórico Detalhado
-        </button>
-      </div>
-    </div>
-
       {/* Cards principais */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-10">
         <div className={`p-4 rounded shadow ${cores[0]}`}>
@@ -208,78 +205,49 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <div className="...">
+      {/* ...dashboard completo */}
+        <div className="mt-10">
+          <button
+            onClick={() => navigate('/historico')}
+            className="px-4 py-2 bg-blue-600 text-white rounded shadow"
+          >
+            Ver Histórico Detalhado
+          </button>
+        </div>
+      </div>
+
       <h2 className="text-2xl font-bold mb-4">Gráficos</h2>
-      <div className="w-full h-80 mb-8 bg-white p-4 rounded shadow">
-        <h3 className="text-lg font-semibold mb-2">Lucro por Dia</h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={porDia.map(item => ({
-            data: `${item._id.dia}/${item._id.mes}`,
-            lucro: item.totalLucro
-          }))}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="data" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="lucro" stroke="#10b981" strokeWidth={2} />
-          </LineChart>
+      <div className="w-full h-80 mb-8 p-4 rounded shadow">
+        <h3 className="text-lg font-semibold mb-2">Bruto x Lucro x Combustível</h3>
+        <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={porDia}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="_id.dia" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="totalValorBruto" stroke="#8884d8" name="Valor Bruto" />
+          <Line type="monotone" dataKey="totalLucro" stroke="#82ca9d" name="Lucro Líquido" />
+          <Line type="monotone" dataKey="totalGastoCombustivel" stroke="#ff7300" name="Gasto Combustível" />
+        </LineChart>
         </ResponsiveContainer>
       </div>
 
-
-      {/* Lucro por Dia */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Lucro por Dia</h2>
-        {porDia.length === 0 ? (
-          <p>Nenhum registro por dia.</p>
-        ) : (
-          <ul className="list-disc pl-5 max-h-48 overflow-auto">
-            {porDia.map((item, idx) => (
-              <li key={idx} className="flex items-center gap-2">
-                {`${item._id.dia}/${item._id.mes}/${item._id.ano} — R$${item.totalLucro.toFixed(2)} — Km: ${item.totalKm.toFixed(2)}`}
-                {item.metaBateu !== undefined ? (
-                  item.metaBateu ? (
-                    <span className="text-green-600 font-bold ml-2">✔️</span>
-                  ) : (
-                    <span className="text-red-600 font-bold ml-2">❌</span>
-                  )
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* Lucro por Semana */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Lucro por Semana</h2>
-        {porSemana.length === 0 ? (
-          <p>Nenhum registro por semana.</p>
-        ) : (
-          <ul className="list-disc pl-5 max-h-48 overflow-auto">
-            {porSemana.map((item, idx) => (
-              <li key={idx}>
-                {`Semana ${item._id.semana} de ${item._id.ano} — R$${item.totalLucro.toFixed(2)} — Km: ${item.totalKm.toFixed(2)}`}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* Lucro por Mês */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Lucro por Mês</h2>
-        {porMes.length === 0 ? (
-          <p>Nenhum registro por mês.</p>
-        ) : (
-          <ul className="list-disc pl-5 max-h-48 overflow-auto">
-            {porMes.map((item, idx) => (
-              <li key={idx}>
-                {`${item._id.mes}/${item._id.ano} — R$${item.totalLucro.toFixed(2)} — Km: ${item.totalKm.toFixed(2)}`}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className="w-full h-80 mb-8 p-4 rounded shadow">
+        <h3 className="text-lg font-semibold mb-2">Lucro x Quilometragem</h3>
+        <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={porDia}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="_id.dia" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="totalLucro" stroke="#28a745" name="Lucro Líquido" />
+          <Line type="monotone" dataKey="totalKm" stroke="#007bff" name="Quilometragem" />
+        </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
