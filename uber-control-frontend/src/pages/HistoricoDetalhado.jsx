@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function HistoricoDetalhado() {
   const [registros, setRegistros] = useState([]);
@@ -10,6 +12,73 @@ export default function HistoricoDetalhado() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+
+  const exportarPDF = () => {
+  const doc = new jsPDF();
+
+  const titulo = 'Histórico Detalhado';
+  const intervalo = dateRange.start && dateRange.end
+    ? `Período: ${new Date(dateRange.start).toLocaleDateString()} até ${new Date(dateRange.end).toLocaleDateString()}`
+    : 'Todos os registros';
+
+  doc.setFontSize(18);
+  doc.text(titulo, 14, 20);
+  doc.setFontSize(12);
+  doc.text(intervalo, 14, 30);
+
+  const colunas = [
+    'Data',
+    'Quilometragem',
+    'Valor Bruto',
+    'Gasto Combustível',
+    'Lucro Líquido',
+    'Lucro/Km',
+    'Bruto/Km',
+  ];
+
+  const linhas = registros.map(reg => {
+    const lucroPorKm = reg.quilometragem ? reg.lucroLiquido / reg.quilometragem : 0;
+    const brutoPorKm = reg.quilometragem ? reg.valorBruto / reg.quilometragem : 0;
+    return [
+      new Date(reg.data).toLocaleDateString(),
+      reg.quilometragem,
+      `R$ ${reg.valorBruto.toFixed(2)}`,
+      `R$ ${reg.gastoCombustivel.toFixed(2)}`,
+      `R$ ${reg.lucroLiquido.toFixed(2)}`,
+      `R$ ${lucroPorKm.toFixed(2)}`,
+      `R$ ${brutoPorKm.toFixed(2)}`
+    ];
+  });
+
+  // Totalizadores
+  const somaKm = registros.reduce((acc, r) => acc + r.quilometragem, 0);
+  const somaBruto = registros.reduce((acc, r) => acc + r.valorBruto, 0);
+  const somaGasto = registros.reduce((acc, r) => acc + r.gastoCombustivel, 0);
+  const somaLucro = registros.reduce((acc, r) => acc + r.lucroLiquido, 0);
+  const mediaLucroKm = somaKm > 0 ? somaLucro / somaKm : 0;
+  const mediaBrutoKm = somaKm > 0 ? somaBruto / somaKm : 0;
+
+  const linhaTotal = [
+    'TOTAL',
+    somaKm,
+    `R$ ${somaBruto.toFixed(2)}`,
+    `R$ ${somaGasto.toFixed(2)}`,
+    `R$ ${somaLucro.toFixed(2)}`,
+    `R$ ${mediaLucroKm.toFixed(2)}`,
+    `R$ ${mediaBrutoKm.toFixed(2)}`
+  ];
+
+  autoTable(doc, {
+    startY: 40,
+    head: [colunas],
+    body: [...linhas, linhaTotal],
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [33, 150, 243] },
+  });
+
+  doc.save('historico_detalhado.pdf');
+  };
+
 
   const fetchRegistros = async () => {
     setLoading(true);
@@ -186,6 +255,13 @@ export default function HistoricoDetalhado() {
 	            )}
 	          </tbody>
 	        </table>
+
+		<button
+  			onClick={exportarPDF}
+  			className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+		> Exportar como PDF
+		</button>
+
 
 	        <div className="flex justify-between">
 	          <button disabled={page <= 1} onClick={() => setPage(p => Math.max(p - 1, 1))} className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50">Anterior</button>
