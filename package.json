@@ -23,6 +23,7 @@
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.525.0",
     "mongoose": "^8.16.1",
+    "nodemailer": "^7.0.5",
     "postcss": "^8.5.6",
     "recharts": "^3.1.0",
     "tailwindcss": "^4.1.11"

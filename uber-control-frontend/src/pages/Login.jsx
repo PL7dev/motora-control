@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BotaoVoltar from '../components/BotaoVoltar';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-4 border rounded-xl shadow-md">
+      <BotaoVoltar />
       <h2 className="text-xl font-bold mb-4">Login</h2>
       {erro && <p className="text-red-500">{erro}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -55,6 +57,9 @@ export default function Login() {
           Entrar
         </button>
       </form>
+      <a href="/esqueci-senha" className="text-center text-blue-600 hover:underline">
+        Esqueci minha senha
+      </a>
       <p className="mt-4 text-center">
         Não tem uma conta?{' '}
           <a href="/register" className="text-blue-600 hover:underline">

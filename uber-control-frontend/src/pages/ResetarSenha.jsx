@@ -4,20 +4,22 @@ import axios from 'axios';
 
 export default function ResetarSenha() {
   const { token } = useParams();
+  const navigate = useNavigate();
   const [novaSenha, setNovaSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [erro, setErro] = useState('');
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErro('');
     setMensagem('');
+    setErro('');
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, { novaSenha });
+      const res = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
+        novaSenha,
+      });
       setMensagem(res.data.msg);
-      setTimeout(() => navigate('/login'), 2500);
+      setTimeout(() => navigate('/login'), 3000); // redireciona após 3s
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao redefinir senha.');
     }
@@ -36,7 +38,7 @@ export default function ResetarSenha() {
           required
         />
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Redefinir Senha
+          Redefinir senha
         </button>
       </form>
       {mensagem && <p className="text-green-600 mt-4">{mensagem}</p>}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BotaoVoltar from '../components/BotaoVoltar';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ export default function Register() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-4 border rounded-xl shadow-md">
+      <BotaoVoltar />
       <h2 className="text-xl font-bold mb-4">Cadastro</h2>
       {erro && <p className="text-red-500">{erro}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
