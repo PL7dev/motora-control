@@ -113,33 +113,6 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-// router.post('/forgot-password', async (req, res) => {
-//   const { email } = req.body;
-
-//   try {
-//     const usuario = await User.findOne({ email });
-//     if (!usuario) {
-//       return res.status(404).json({ msg: 'Usuário não encontrado com este email.' });
-//     }
-
-//     // Gerar token e definir validade
-//     const token = crypto.randomBytes(32).toString('hex');
-//     const expires = Date.now() + 3600000; // 1 hora
-
-//     usuario.resetToken = token;
-//     usuario.resetExpires = expires;
-//     await usuario.save();
-
-//     // Simula envio de e-mail
-//     const link = `http://localhost:5173/reset-password/${token}`;
-//     console.log(`Link de recuperação de senha: ${link}`);
-
-//     res.json({ msg: 'Link de recuperação enviado para o email (simulado no console).' });
-//   } catch (error) {
-//     res.status(500).json({ msg: 'Erro ao solicitar recuperação de senha.' });
-//   }
-// });
-
 // Rota para redefinir a senha
 router.post('/reset-password/:token', async (req, res) => {
   const { token } = req.params;

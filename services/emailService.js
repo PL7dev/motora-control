@@ -19,7 +19,7 @@ async function enviarEmailRecuperacao(to, link) {
   const mailOptions = {
     from: `"Suporte Motora Control" <${process.env.EMAIL_USER}>`,
     to,
-    subject: 'Recuperação de Senha - Uber Control',
+    subject: 'Recuperação de Senha - Motora Control',
     html: `
       <h2>Recuperação de Senha</h2>
       <p>Você solicitou a redefinição da sua senha. Clique no link abaixo para criar uma nova:</p>
