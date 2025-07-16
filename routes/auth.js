@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/User');
 const validate = require('../validations/validateMiddleware');
 const { registerSchema, loginSchema } = require('../validations/authValidation');
@@ -51,8 +52,6 @@ router.post('/register', validate(registerSchema), async (req, res) => {
   }
 });
 
-module.exports = router;
-
 // ROTA POST /login
 router.post('/login', validate(loginSchema), async (req, res) => {
   const { email, senha } = req.body;
@@ -83,6 +82,63 @@ router.post('/login', validate(loginSchema), async (req, res) => {
   }
 });
 
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const usuario = await User.findOne({ email });
+    if (!usuario) {
+      return res.status(404).json({ msg: 'Usuário não encontrado com este email.' });
+    }
+
+    // Gerar token e definir validade
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = Date.now() + 3600000; // 1 hora
+
+    usuario.resetToken = token;
+    usuario.resetExpires = expires;
+    await usuario.save();
+
+    // Simula envio de e-mail
+    const link = `http://localhost:5173/reset-password/${token}`;
+    console.log(`Link de recuperação de senha: ${link}`);
+
+    res.json({ msg: 'Link de recuperação enviado para o email (simulado no console).' });
+  } catch (error) {
+    res.status(500).json({ msg: 'Erro ao solicitar recuperação de senha.' });
+  }
+});
+
+// Rota para redefinir a senha
+router.post('/reset-password/:token', async (req, res) => {
+  const { token } = req.params;
+  const { novaSenha } = req.body;
+
+  try {
+    const usuario = await User.findOne({
+      resetToken: token,
+      resetExpires: { $gt: Date.now() } // token ainda válido
+    });
+
+    if (!usuario) {
+      return res.status(400).json({ msg: 'Token inválido ou expirado.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const senhaCriptografada = await bcrypt.hash(novaSenha, salt);
+
+    usuario.senha = senhaCriptografada;
+    usuario.resetToken = undefined;
+    usuario.resetExpires = undefined;
+    await usuario.save();
+
+    res.json({ msg: 'Senha redefinida com sucesso!' });
+  } catch (error) {
+    res.status(500).json({ msg: 'Erro ao redefinir senha.' });
+  }
+});
+
+
 const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/protegido', authMiddleware, (req, res) => {
@@ -101,3 +157,6 @@ router.get('/me', authMiddleware, async (req, res) => {
     res.status(500).json({ msg: 'Erro ao buscar dados do usuário' });
   }
 });
+
+
+module.exports = router;

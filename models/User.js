@@ -6,7 +6,9 @@ const UserSchema = new mongoose.Schema({
   senha: { type: String, required: true },
   modeloCarro: { type: String },
   kmPorLitro: { type: Number, default: 10 },
-  metaLucroDiario: { type: Number, default: 100 }
+  metaLucroDiario: { type: Number, default: 100 },
+  resetToken: { type: String },
+  resetExpires: { type: Date },
 });
 
 module.exports = mongoose.model('User', UserSchema);
