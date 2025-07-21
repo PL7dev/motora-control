@@ -9,13 +9,13 @@ export default function ResetarSenha() {
   const [novaSenha, setNovaSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [erro, setErro] = useState('');
-  const [loading, setLoading] = useState(false); // 👈 novo estado
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensagem('');
     setErro('');
-    setLoading(true); // 👈 ativa o loading
+    setLoading(true);
 
     try {
       const res = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
@@ -26,7 +26,7 @@ export default function ResetarSenha() {
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao redefinir senha.');
     } finally {
-      setLoading(false); // 👈 desativa loading
+      setLoading(false);
     }
   };
 
@@ -44,10 +44,10 @@ export default function ResetarSenha() {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-60"
           disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex justify-center items-center"
         >
-          {loading ? <Spinner /> : 'Redefinir senha'}
+          {loading ? <Spinner size={5} color="white" /> : 'Redefinir senha'}
         </button>
       </form>
       {mensagem && <p className="text-green-600 mt-4">{mensagem}</p>}

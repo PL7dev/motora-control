@@ -67,7 +67,7 @@ export default function Login() {
           disabled={loading}
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex justify-center items-center"
         >
-          {loading ? <Spinner /> : 'Entrar'}
+          {loading ? <Spinner size={5} color="white" /> : 'Entrar'}
         </button>
       </form>
 
