@@ -11,7 +11,7 @@ export default function Home() {
         </div>
 
         <h1 className="text-4xl font-bold text-blue-800 mb-4">
-          Bem-vindo ao <span className="text-blue-600">Uber Control</span>
+          Bem-vindo ao <span className="text-blue-600">Motora Control</span>
         </h1>
 
         <p className="text-gray-600 text-lg mb-6">

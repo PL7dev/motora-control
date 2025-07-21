@@ -22,7 +22,7 @@ app.use('/api/registro', registroRoutes);
 app.use('/api/perfil', perfilRoutes);
 
 app.get('/', (req, res) => {
-  res.send('API do Uber Control funcionando!');
+  res.send('API do Motora Control funcionando!');
 });
 
 app.use(errorHandler);

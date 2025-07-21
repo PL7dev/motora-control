@@ -5,9 +5,9 @@ export default function ComoFunciona() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <BotaoVoltar />
-      <h1 className="ttext-4xl font-bold text-blue-800 mb-4">Como Funciona o <span className="text-blue-600">Uber Control</span></h1>
+      <h1 className="text-4xl font-bold text-blue-800 mb-4">Como Funciona o <span className="text-blue-600">Motora Control</span></h1>
       <p className="mb-4">
-        O Uber Control é uma ferramenta criada para motoristas de aplicativo que desejam acompanhar seus resultados e tomar decisões baseadas em dados reais.
+        O Motora Control é uma ferramenta criada para motoristas de aplicativo que desejam acompanhar seus resultados e tomar decisões baseadas em dados reais.
       </p>
       <ul className="list-disc list-inside space-y-2">
         <li>Registre corridas com valor, quilometragem e gasto de combustível.</li>
