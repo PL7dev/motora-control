@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Spinner from '../components/Spinner';
 
 export default function ResetarSenha() {
   const { token } = useParams();
@@ -8,20 +9,24 @@ export default function ResetarSenha() {
   const [novaSenha, setNovaSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [erro, setErro] = useState('');
+  const [loading, setLoading] = useState(false); // 👈 novo estado
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensagem('');
     setErro('');
+    setLoading(true); // 👈 ativa o loading
 
     try {
       const res = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
         novaSenha,
       });
       setMensagem(res.data.msg);
-      setTimeout(() => navigate('/login'), 3000); // redireciona após 3s
+      setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao redefinir senha.');
+    } finally {
+      setLoading(false); // 👈 desativa loading
     }
   };
 
@@ -37,8 +42,12 @@ export default function ResetarSenha() {
           className="w-full p-2 border rounded"
           required
         />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Redefinir senha
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-60"
+          disabled={loading}
+        >
+          {loading ? <Spinner /> : 'Redefinir senha'}
         </button>
       </form>
       {mensagem && <p className="text-green-600 mt-4">{mensagem}</p>}

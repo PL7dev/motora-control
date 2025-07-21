@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
+import Spinner from '../components/Spinner'; // ✅ Importa o componente
 
 export default function Registro() {
   const [form, setForm] = useState({
@@ -12,6 +13,7 @@ export default function Registro() {
 
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
+  const [loading, setLoading] = useState(false); // ✅ Estado para loading
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,11 +23,11 @@ export default function Registro() {
     e.preventDefault();
     setErro('');
     setSucesso('');
+    setLoading(true); // ✅ Começa o loading
+
     try {
-      // Pega o token do localStorage
       const token = localStorage.getItem('token');
 
-      // Faz a requisição POST com o token no header Authorization
       await axios.post(
         'http://localhost:5000/api/registro',
         form,
@@ -33,6 +35,7 @@ export default function Registro() {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
+
       setSucesso('Registro criado com sucesso!');
       setForm({
         quilometragem: '',
@@ -47,6 +50,8 @@ export default function Registro() {
 
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao criar registro');
+    } finally {
+      setLoading(false); // ✅ Encerra o loading mesmo se der erro
     }
   };
 
@@ -56,6 +61,7 @@ export default function Registro() {
       <h2 className="text-xl font-bold mb-4">Novo Registro de Corrida</h2>
       {erro && <p className="text-red-500">{erro}</p>}
       {sucesso && <p className="text-green-500">{sucesso}</p>}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="number"
@@ -95,8 +101,12 @@ export default function Registro() {
           className="input"
           required
         />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Salvar Registro
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 flex justify-center items-center"
+        >
+          {loading ? <Spinner /> : 'Salvar Registro'}
         </button>
       </form>
     </div>

@@ -10,7 +10,8 @@ export default function Perfil() {
     metaLucroDiario: ''
   });
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // loading inicial
+  const [submitting, setSubmitting] = useState(false); // loading do submit
   const [mensagem, setMensagem] = useState('');
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function Perfil() {
   const handleSubmit = async e => {
     e.preventDefault();
     setMensagem('');
+    setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
       await axios.put('http://localhost:5000/api/perfil', form, {
@@ -50,11 +52,12 @@ export default function Perfil() {
       setMensagem('Perfil atualizado com sucesso!');
 
       setTimeout(() => {
-        window.location.href = '/inicio';  // ou '/dashboard' se preferir
+        window.location.href = '/inicio';
       }, 2500);
-      
     } catch (err) {
       setMensagem('Erro ao atualizar perfil');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -64,7 +67,6 @@ export default function Perfil() {
     <div className="max-w-xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Perfil do Usuário</h1>
       <BotaoVoltar />
-
       {mensagem && <p className="my-4 text-center text-blue-600">{mensagem}</p>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -101,8 +103,12 @@ export default function Perfil() {
           />
         </label>
 
-        <button type="submit" className="bg-green-600 text-white py-2 rounded hover:bg-green-700">
-          Salvar Alterações
+        <button
+          type="submit"
+          className="bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
+          disabled={submitting}
+        >
+          {submitting ? 'Salvando...' : 'Salvar Alterações'}
         </button>
       </form>
     </div>

@@ -5,17 +5,21 @@ export default function EsqueciSenha() {
   const [email, setEmail] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [erro, setErro] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensagem('');
     setErro('');
+    setLoading(true);
 
     try {
       const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
       setMensagem(res.data.msg);
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao enviar link de recuperação.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,8 +35,12 @@ export default function EsqueciSenha() {
           className="w-full p-2 border rounded"
           required
         />
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Enviar link de recuperação
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          {loading ? 'Enviando...' : 'Enviar link de recuperação'}
         </button>
       </form>
       {mensagem && <p className="text-green-600 mt-4">{mensagem}</p>}
