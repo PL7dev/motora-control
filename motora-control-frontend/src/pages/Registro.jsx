@@ -30,7 +30,7 @@ export default function Registro() {
       const token = localStorage.getItem('token');
 
       await axios.post(
-        `${baseUrl}/api/registro`,
+        `${baseUrl}/registro`,
         form,
         {
           headers: { Authorization: `Bearer ${token}` }
