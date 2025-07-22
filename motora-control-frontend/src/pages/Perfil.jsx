@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
-
-const baseUrl = import.meta.env.VITE_API_URL;
+import baseUrl from '../services/api';
 
 export default function Perfil() {
   const [form, setForm] = useState({

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
-import Spinner from '../components/Spinner'; // ✅ Importa o componente
+import Spinner from '../components/Spinner';
+import baseUrl from '../services/api';
 
 export default function Registro() {
   const [form, setForm] = useState({
@@ -13,7 +14,7 @@ export default function Registro() {
 
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
-  const [loading, setLoading] = useState(false); // ✅ Estado para loading
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -23,13 +24,13 @@ export default function Registro() {
     e.preventDefault();
     setErro('');
     setSucesso('');
-    setLoading(true); // ✅ Começa o loading
+    setLoading(true);
 
     try {
       const token = localStorage.getItem('token');
 
       await axios.post(
-        'http://localhost:5000/api/registro',
+        `${baseUrl}/api/registro`,
         form,
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -51,7 +52,7 @@ export default function Registro() {
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao criar registro');
     } finally {
-      setLoading(false); // ✅ Encerra o loading mesmo se der erro
+      setLoading(false);
     }
   };
 

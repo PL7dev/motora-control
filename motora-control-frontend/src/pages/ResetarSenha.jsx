@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Spinner from '../components/Spinner';
+import baseUrl from '../services/api';
 
 export default function ResetarSenha() {
   const { token } = useParams();
@@ -18,7 +19,7 @@ export default function ResetarSenha() {
     setLoading(true);
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
+      const res = await axios.post(`${baseUrl}/auth/reset-password/${token}`, {
         novaSenha,
       });
       setMensagem(res.data.msg);

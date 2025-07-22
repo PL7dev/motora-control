@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import baseUrl from '../services/api';
 
 export default function EsqueciSenha() {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ export default function EsqueciSenha() {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
+      const res = await axios.post(`${baseUrl}/auth/forgot-password`, { email });
       setMensagem(res.data.msg);
     } catch (err) {
       setErro(err.response?.data?.msg || 'Erro ao enviar link de recuperação.');

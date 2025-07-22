@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
-const baseUrl = import.meta.env.VITE_API_URL
+import baseUrl from '../services/api';
 
 export default function ResumoRapido() {
   const [dados, setDados] = useState(null);

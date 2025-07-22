@@ -4,8 +4,7 @@ import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
-const baseUrl = import.meta.env.VITE_API_URL;
+import baseUrl from '../services/api';
 
 export default function HistoricoDetalhado() {
   const [registros, setRegistros] = useState([]);

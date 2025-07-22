@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BotaoVoltar from '../components/BotaoVoltar';
 import Spinner from '../components/Spinner';
+import baseUrl from '../services/api';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', form);
+      const res = await axios.post(`${baseUrl}/auth/login`, form);
       localStorage.setItem('token', res.data.token);
       navigate('/inicio');
     } catch (err) {

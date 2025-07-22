@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BotaoVoltar from '../components/BotaoVoltar';
 import Spinner from '../components/Spinner';
+import baseUrl from '../services/api';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', form);
+      const res = await axios.post(`${baseUrl}/auth/register`, form);
       localStorage.setItem('token', res.data.token);
       navigate('/inicio');
     } catch (err) {

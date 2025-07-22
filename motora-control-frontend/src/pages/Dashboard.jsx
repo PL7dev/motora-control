@@ -15,8 +15,7 @@ import {
   BarChart,
   Legend,
 } from 'recharts';
-
-const baseUrl = import.meta.env.VITE_API_URL
+import baseUrl from '../services/api';
 
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
