@@ -12,6 +12,7 @@ import PrivateRoute from './components/PrivateRoute';
 import EsqueciSenha from './pages/EsqueciSenha';
 import ResetarSenha from './pages/ResetarSenha';  
 
+
 export default function App() {
   return (
     <Routes>
