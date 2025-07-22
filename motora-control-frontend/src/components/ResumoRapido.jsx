@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const baseUrl = import.meta.env.VITE_API_URL
+
 export default function ResumoRapido() {
   const [dados, setDados] = useState(null);
   const [erro, setErro] = useState('');
@@ -10,7 +12,7 @@ export default function ResumoRapido() {
     const buscarResumo = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/registro/dashboard', {
+        const res = await axios.get(`${baseUrl}/registro/dashboard`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

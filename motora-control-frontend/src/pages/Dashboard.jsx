@@ -16,6 +16,8 @@ import {
   Legend,
 } from 'recharts';
 
+const baseUrl = import.meta.env.VITE_API_URL
+
 export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export default function Dashboard() {
 
       try {
         const query = buildQueryParams();
-        const res = await axios.get(`http://localhost:5000/api/registro/dashboard?${query}`, {
+        const res = await axios.get(`${baseUrl}/registro/dashboard?${query}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setDashboardData(res.data);

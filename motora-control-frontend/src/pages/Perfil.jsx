@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import BotaoVoltar from '../components/BotaoVoltar';
 
+const baseUrl = import.meta.env.VITE_API_URL;
+
 export default function Perfil() {
   const [form, setForm] = useState({
     modeloCarro: '',
@@ -18,7 +20,7 @@ export default function Perfil() {
     const fetchPerfil = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/perfil', {
+        const res = await axios.get(`${baseUrl}/perfil`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setForm({

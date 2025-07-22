@@ -5,6 +5,8 @@ import BotaoVoltar from '../components/BotaoVoltar';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+const baseUrl = import.meta.env.VITE_API_URL;
+
 export default function HistoricoDetalhado() {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -92,7 +94,7 @@ export default function HistoricoDetalhado() {
       if (dateRange.start) params.append('start', dateRange.start);
       if (dateRange.end) params.append('end', dateRange.end);
 
-      const res = await axios.get(`http://localhost:5000/api/registro/historico?${params.toString()}`, {
+      const res = await axios.get(`${baseUrl}/registro/historico?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
