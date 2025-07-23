@@ -11,6 +11,12 @@ Pensando nisso, o Motora Control foi criado para oferecer:
 
 A aplicação foi desenvolvida com foco em usabilidade, organização e clareza dos dados, visando otimizar a gestão financeira dos profissionais do transporte.
 
+### ⚙️ Diferenciais do Motora Control
+- Considera custos reais como gasolina e manutenção
+- Interface simples, focada no dia a dia do motorista
+- Totalizadores e gráficos que ajudam na tomada de decisões
+- Exportação em PDF e filtros avançados
+
 ---
 
 ## 📸 Demonstrações
@@ -119,5 +125,9 @@ Backend: [Render](https://render.com/)
 ### Autor
 Feito por Pedro Lucas
 [LinkedIn](https://www.linkedin.com/in/pl-alcantara/) • [GitHub](https://github.com/PL7dev)
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou enviar um pull request com melhorias, correções ou novas funcionalidades.
 
 ### Licença: Este projeto está sob a licença MIT.
